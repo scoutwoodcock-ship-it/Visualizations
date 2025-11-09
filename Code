@@ -1,0 +1,46 @@
+Table data;
+
+float cellWidth = 10;   
+float cellHeight = 30;  
+
+void setup() {
+  size(1000, 600);
+  background(255);
+  noStroke();
+  textAlign(LEFT, TOP);
+  textSize(12);
+
+  data = loadTable("data.csv", "header");
+    exit();
+  }
+  
+
+void drawHeatmap() {
+  background(255);
+  fill(0);
+  text("Heatmap: Red = Above Set Temp | Blue = Below Set Temp", 10, 10);
+
+  for (TableRow row : data.rows()) {
+    int stationID = row.getInt("station id");
+    int time = row.getInt("time");
+    float temp = row.getFloat("temp");
+    float settemp = row.getFloat("settemp");
+
+    float diff = temp - settemp;
+    // Map distance from settemp to color intensity
+    float intensity = constrain(map(abs(diff), 0, 10, 50, 255), 50, 255);
+
+    color c;
+    if (diff > 0) {
+      c = color(intensity, 0, 0);
+    } else {
+      c = color(0, 0, intensity);
+    }
+    float x = (time - 1) * cellWidth;
+    float y = (stationID - 1) * cellHeight + 30;
+
+    fill(c);
+    rect(x, y, cellWidth, cellHeight);
+
+  }
+}
